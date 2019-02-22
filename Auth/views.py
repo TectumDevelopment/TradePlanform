@@ -11,7 +11,7 @@ from rest_framework.decorators import api_view, permission_classes
 # Create your views here.
 @csrf_exempt
 def auth(request):
-    if request.method == "POST":
+    if request.method == "GET":
         data = json.loads(request.body)
         token = data["token"]
         user = request.user
@@ -32,7 +32,9 @@ def getToken(request):
                 login(request, user)
                 token = Token.objects.get(user = user)
                 if token:
-                    pass
+                    Token.objects.filter(user=user).update(key= token.generate_key())
+                    token = Token.objects.get(user = user)
+                    return JsonResponse({"token" : token.key})
                 else:
                     token = Token.objects.create(user = user)
                 return JsonResponse({"token" : token.key})
