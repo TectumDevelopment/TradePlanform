@@ -33,17 +33,13 @@ def getToken(request):
                 if token:
                     Token.objects.filter(user=user).update(key= token.generate_key())
                     token = Token.objects.get(user = user)
-                    logout(request)
                     return JsonResponse({"token" : token.key})
                 else:
                     token = Token.objects.create(user = user)
-                    logout(request)
                 return JsonResponse({"token" : token.key})
             else:
-                logout(request)
                 return HttpResponse("Disabled account")
         else:
-            logout(request)
             return HttpResponse("Invalid login", status = 403 )
     else:
         return HttpResponse("Non POST Request", status = 404)
