@@ -20,5 +20,7 @@ from . import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include("Auth.urls")),
-    path('time' , views.getTime)
+    path('time' , views.getTime),
+    path('wallet/',include("TectumWallet.urls")),
+    path('exchange/',include("Exchange.urls"))
 ]

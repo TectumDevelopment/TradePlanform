@@ -12,8 +12,9 @@ from JsonFactory.JsonFactory import Forbidden
 def checkToken(request):
     data = json.loads(request.body)
     token = data["token"]
-    user = data["username"]
-    valid_token =  Token.objects.get(user = user)
+    username = data["username"]
+    user = User.objects.get(username = username)
+    valid_token = Token.objects.get(user = user)
     if valid_token.key == token:
         return True
     else:
