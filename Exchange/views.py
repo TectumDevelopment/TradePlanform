@@ -7,10 +7,11 @@ import json
 from .models import *
 from decimal import *
 from .validator import *
+from django.core import serializers
 # Create your views here.
 
 
-def createOrSumAsset(user,commodity,amount):
+def createOrSumAsset(user, commodity, amount):
     if len(Asset.objects.filter(commodity=commodity, user=user)) > 0:
         asset = Asset.objects.get(commodity=commodity, user=user)
         asset.amount = asset.amount + amount
@@ -36,7 +37,7 @@ def createAsset(request):
         except:
             return NotFound("No such commodity " + сommodity_name)
         amount = Decimal(data["Asset"]["ammount"])
-        asset = createOrSumAsset(user,commodity,amount)
+        asset = createOrSumAsset(user, commodity, amount)
         return JsonResponse({"Success": "added", "amount": asset.amount})
     else:
         return Forbidden("Invalid token")
@@ -65,8 +66,8 @@ def createTender(request):
             own_asset = Asset.objects.filter(commodity=commodity, user=user)
             if len(own_asset) > 0:
                 own_asset = own_asset[0]
-                if ((Decimal(own_asset.amount) > own_asset_commodity_amount) or
-                        (Decimal(own_asset.amount) == own_asset_commodity_amount) ) :
+                if ((Decimal(own_asset.amount) > own_asset_commodity_amount)
+                        or (Decimal(own_asset.amount) == own_asset_commodity_amount) ) :
                     wish_commodity = validateCommodity(
                         wish_asset_commodity_name)
                     if wish_commodity is not None:
@@ -106,13 +107,15 @@ def buyTender(request, tender_id):
                 commodity = validateCommodity(tender.wish_commodity.name)
                 asset = validateAsset(user, commodity)
                 if asset is not None:
-                    if ((asset.amount > tender.wish_commodity_ammount) or
-                                        (asset.amount == tender.wish_commodity_ammount)):
+                    if ((asset.amount > tender.wish_commodity_ammount)
+                            or (asset.amount == tender.wish_commodity_ammount)):
                         # decrease buyer amount
                         asset.amount = asset.amount - tender.wish_commodity_ammount
                         asset.save()
-                        asset = createOrSumAsset(tender.user ,commodity, tender.wish_commodity_ammount)
-                        asset = createOrSumAsset(user ,tender.own_commodity, tender.own_commodity_ammount)
+                        asset = createOrSumAsset(
+                            tender.user, commodity, tender.wish_commodity_ammount)
+                        asset = createOrSumAsset(
+                            user, tender.own_commodity, tender.own_commodity_ammount)
                         tender.delete()
                         return JsonResponse({"Sucess": "trade done"})
                     else:
