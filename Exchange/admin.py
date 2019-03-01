@@ -12,7 +12,7 @@ class AssetAdmin(admin.ModelAdmin):
 
 
 class TenderAdmin(admin.ModelAdmin):
-    list_display = ('user', 'own_commodity', 'own_commodity_ammount',
+    list_display = ('pk','user', 'own_commodity', 'own_commodity_ammount',
                     "wish_commodity", "wish_commodity_ammount")
 
 
