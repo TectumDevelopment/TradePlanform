@@ -4,8 +4,7 @@ from datetime import datetime
 # Create your models here.
 
 
-class Commodity
-(models.Model):
+class Commodity(models.Model):
     name = models.CharField(max_length=50)
     measure = models.CharField(max_length=50)
 
